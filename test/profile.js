@@ -86,11 +86,11 @@ describe('Profile', function() {
 		it('check profile parsing', function() {
 			var profileData = {
 					_id: 1,
-					email: "ivan@example.com",
-					firstName: "Петр",
-					fullName: "Петр Петров",
-					gender: "male",
-					lastName: "Петров"
+					email: 'ivan@example.com',
+					firstName: 'Петр',
+					fullName: 'Петр Петров',
+					gender: 'male',
+					lastName: 'Петров'
 				},
 				rawProfile = JSON.stringify(profileData);
 
