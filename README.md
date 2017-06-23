@@ -1,6 +1,8 @@
 # passport-eipsk-strategy
 
-TODO: add badges
+[![Build Status](https://api.travis-ci.org/dvpnt/passport-eipsk-strategy.svg)](https://travis-ci.org/dvpnt/passport-eipsk-strategy)
+[![Coverage Status](https://coveralls.io/repos/github/dvpnt/passport-eipsk-strategy/badge.svg?branch=master)](https://coveralls.io/github/dvpnt/passport-eipsk-strategy?branch=master)
+[![NPM Version](https://img.shields.io/npm/v/passport-eipsk-strategy.svg)](https://www.npmjs.com/package/passport-eipsk-strategy)
 
 [Passport](http://passportjs.org/) strategy for authenticating with [EIPSK](https://all.culture.ru)
 using the OAuth 2.0 API.
