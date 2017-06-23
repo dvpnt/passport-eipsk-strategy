@@ -4,23 +4,18 @@ var sinon = require('sinon'),
 	InternalOAuthError = require('passport-oauth2').InternalOAuthError,
 	url = require('url'),
 	expect = require('expect.js'),
+	errors = require('../lib/errors'),
 	helpers = require('./helpers');
 
 describe('Profile', function() {
 	describe('getting', function() {
 		var strategy, stub, getStub,
 			clientSecret = '1234',
-			accessToken = 'accesstoken',
-			profileURL = {
-				host: 'testprofile.url',
-				pathname: '/fb.do',
-				protocol: 'https:'
-			};
+			accessToken = 'accesstoken';
 
 		before(function() {
 			strategy = helpers.createStrategy({
-				clientSecret: clientSecret,
-				profileURL: url.format(profileURL)
+				clientSecret: clientSecret
 			});
 			helpers.passport.use(strategy);
 		});
@@ -46,11 +41,8 @@ describe('Profile', function() {
 			expect(call.args[1]).to.eql(accessToken);
 
 			var parsedUrl = url.parse(call.args[0], true);
-			expect(parsedUrl.host).to.eql(profileURL.host);
-			expect(parsedUrl.pathname).to.eql(profileURL.pathname);
-			// expect(parsedUrl.query.method).to.eql('users.getCurrentUser');
-			// expect(parsedUrl.query.application_key).to.eql(clientSecret);
-			// expect(parsedUrl.query.sig).to.eql('7fe78b9f05339e85504da6bec3918431');
+			expect(parsedUrl.host).to.eql('all.culture.ru');
+			expect(parsedUrl.pathname).to.eql('/api/2.3/users/me');
 		});
 
 		it('try to get with oauth error', function() {
@@ -69,42 +61,36 @@ describe('Profile', function() {
 			expect(error.oauthError).to.eql(errorData);
 		});
 
-		// it('try to get with invalid json', function() {
-		// 	getStub.yields(null, 'invalidjson');
-        //
-		// 	strategy.userProfile(accessToken, stub);
-        //
-		// 	var error = stub.firstCall.args[0];
-		// 	expect(error).to.be.an(errors.InvalidResponse);
-		// });
-        //
-		// it('check ok api error', function() {
-		// 	var errorData = {
-		// 		error_code: 123,
-		// 		error_msg: 'test msg'
-		// 	};
-        //
-		// 	getStub.yields(null, JSON.stringify(errorData));
-		// 	strategy.userProfile(accessToken, stub);
-        //
-		// 	var error = stub.firstCall.args[0];
-		// 	expect(error).to.be.an(errors.OkApiError);
-		// 	expect(error.errorCode).to.eql(errorData.error_code);
-		// 	expect(error.message).to.eql(errorData.error_msg);
-		// });
+		it('try to get with invalid json', function() {
+			getStub.yields(null, 'invalidjson');
+
+			strategy.userProfile(accessToken, stub);
+
+			var error = stub.firstCall.args[0];
+			expect(error).to.be.an(errors.InvalidResponse);
+		});
+
+		it('check eipsk api error', function() {
+			var errorData = {
+				error: 'test error'
+			};
+
+			getStub.yields(null, JSON.stringify(errorData));
+			strategy.userProfile(accessToken, stub);
+
+			var error = stub.firstCall.args[0];
+			expect(error).to.be.an(errors.EipskApiError);
+			expect(error.message).to.eql(errorData.error);
+		});
 
 		it('check profile parsing', function() {
 			var profileData = {
-					uid: '2494A013S3EE',
-					birthday: '1901-03-03',
-					age: 110,
-					first_name: 'Name',
-					last_name: 'Surname',
-					name: 'Name Surname',
-					gender: 'male',
-					has_email: true,
-					pic_1: 'http://i113.odnoklassniki.ru/getImage?photoId=93412337&photoType=4',
-					pic_2: 'http://i342.odnoklassniki.ru/getImage?photoId=93412337&photoType=2'
+					_id: 1,
+					email: "ivan@example.com",
+					firstName: "Петр",
+					fullName: "Петр Петров",
+					gender: "male",
+					lastName: "Петров"
 				},
 				rawProfile = JSON.stringify(profileData);
 
@@ -119,20 +105,17 @@ describe('Profile', function() {
 
 			expect(profile.provider).to.eql('eipsk');
 
-			// expect(profile.id).to.eql(profileData.uid);
-			// expect(profile.displayName).to.eql(profileData.name);
-			// expect(profile.name.familyName).to.eql(profileData.last_name);
-			// expect(profile.name.givenName).to.eql(profileData.first_name);
-			// expect(profile.gender).to.eql(profileData.gender);
-			// expect(profile.profileUrl)
-			// 	.to.eql('https://odnoklassniki.ru/profile/' + profile.id);
-			// expect(profile.emails).to.have.length(0);
-            //
-			// expect(profile.photos).to.have.length(2);
-			// expect(profile.photos[0].value).to.eql(profileData.pic_1);
-			// expect(profile.photos[0].type).to.eql('pic_1');
-			// expect(profile.photos[1].value).to.eql(profileData.pic_2);
-			// expect(profile.photos[1].type).to.eql('pic_2');
+			expect(profile.id).to.eql(profileData._id);
+			expect(profile.displayName).to.eql(profileData.fullName);
+			expect(profile.name.familyName).to.eql(profileData.lastName);
+			expect(profile.name.givenName).to.eql(profileData.firstName);
+			expect(profile.gender).to.eql(profileData.gender);
+			expect(profile.profileUrl)
+				.to.eql('https://all.culture.ru/cabinet/users/' + profile.id);
+			expect(profile.emails).to.have.length(1);
+			expect(profile.emails[0]).to.eql(profileData.email);
+
+			expect(profile.photos).to.have.length(0);
 		});
 	});
 

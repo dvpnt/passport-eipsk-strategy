@@ -3,9 +3,7 @@
 var expect = require('expect.js'),
 	url = require('url'),
 	helpers = require('./helpers'),
-	sinon = require('sinon'),
-	_ = require('underscore'),
-	Strategy = require('../lib').Strategy;
+	sinon = require('sinon');
 
 describe('Strategy', function() {
 	var strategy;
