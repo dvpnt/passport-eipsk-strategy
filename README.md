@@ -40,7 +40,7 @@ For example, as route middleware in an [Express](http://expressjs.com/)
 application:
 
 ```js
-app.get('/auth/odnoklassniki',
+app.get('/auth/eipsk',
   passport.authenticate('eipsk'));
 
 app.get('/auth/eipsk/callback',
