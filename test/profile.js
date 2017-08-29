@@ -86,7 +86,6 @@ describe('Profile', function() {
 		it('check profile parsing', function() {
 			var user = {
 					_id: 1,
-					email: 'ivan@example.com',
 					firstName: 'Петр',
 					gender: 'male',
 					lastName: 'Петров'
@@ -112,9 +111,6 @@ describe('Profile', function() {
 			expect(profile.gender).to.eql(user.gender);
 			expect(profile.profileUrl)
 				.to.eql('https://all.culture.ru/cabinet/users/' + user._id);
-			expect(profile.emails).to.have.length(1);
-			expect(profile.emails[0]).to.eql(user.email);
-
 			expect(profile.photos).to.have.length(0);
 		});
 	});
