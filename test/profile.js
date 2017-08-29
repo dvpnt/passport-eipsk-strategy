@@ -84,14 +84,14 @@ describe('Profile', function() {
 		});
 
 		it('check profile parsing', function() {
-			var profileData = {
+			var user = {
 					_id: 1,
 					email: 'ivan@example.com',
 					firstName: 'Петр',
-					fullName: 'Петр Петров',
 					gender: 'male',
 					lastName: 'Петров'
 				},
+				profileData = {user: user},
 				rawProfile = JSON.stringify(profileData);
 
 			getStub.yields(null, rawProfile);
@@ -105,15 +105,15 @@ describe('Profile', function() {
 
 			expect(profile.provider).to.eql('eipsk');
 
-			expect(profile.id).to.eql(profileData._id);
-			expect(profile.displayName).to.eql(profileData.fullName);
-			expect(profile.name.familyName).to.eql(profileData.lastName);
-			expect(profile.name.givenName).to.eql(profileData.firstName);
-			expect(profile.gender).to.eql(profileData.gender);
+			expect(profile.id).to.eql(user._id);
+			expect(profile.displayName).to.eql(user.firstName + ' ' + user.lastName);
+			expect(profile.name.familyName).to.eql(user.lastName);
+			expect(profile.name.givenName).to.eql(user.firstName);
+			expect(profile.gender).to.eql(user.gender);
 			expect(profile.profileUrl)
-				.to.eql('https://all.culture.ru/cabinet/users/' + profile.id);
+				.to.eql('https://all.culture.ru/cabinet/users/' + user._id);
 			expect(profile.emails).to.have.length(1);
-			expect(profile.emails[0]).to.eql(profileData.email);
+			expect(profile.emails[0]).to.eql(user.email);
 
 			expect(profile.photos).to.have.length(0);
 		});
