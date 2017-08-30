@@ -42,7 +42,7 @@ describe('Profile', function() {
 
 			var parsedUrl = url.parse(call.args[0], true);
 			expect(parsedUrl.host).to.eql('all.culture.ru');
-			expect(parsedUrl.pathname).to.eql('/api/2.3/users/me');
+			expect(parsedUrl.pathname).to.eql('/auth/api/1.0/user');
 		});
 
 		it('try to get with oauth error', function() {
@@ -112,36 +112,6 @@ describe('Profile', function() {
 			expect(profile.profileUrl)
 				.to.eql('https://all.culture.ru/cabinet/users/' + user._id);
 			expect(profile.photos).to.have.length(0);
-		});
-	});
-
-	describe('getting with fields', function() {
-		var strategy,
-			fields = ['first_name', 'last_name'];
-
-		before(function() {
-			strategy = helpers.createStrategy({
-				profileFields: fields
-			});
-			helpers.passport.use(strategy);
-		});
-
-		after(function() {
-			helpers.passport.restore();
-		});
-
-		it('check that fields in url', function() {
-			var stub = sinon.stub(),
-				getStub = sinon.stub(strategy._oauth2, 'get');
-
-			strategy.userProfile('1234', stub);
-
-			expect(getStub.called).to.be.ok();
-			var call = getStub.firstCall;
-
-			var parsedUrl = url.parse(call.args[0], true);
-			expect(parsedUrl.query.fields).to.be.ok();
-			expect(parsedUrl.query.fields).to.eql(fields.join(','));
 		});
 	});
 });
