@@ -1,6 +1,6 @@
 {
   "name": "passport-eipsk-strategy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "passport eipsk strategy",
   "main": "./lib",
   "scripts": {
