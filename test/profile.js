@@ -88,7 +88,8 @@ describe('Profile', function() {
 					_id: 1,
 					firstName: 'Петр',
 					gender: 'male',
-					lastName: 'Петров'
+					lastName: 'Петров',
+					email: 'example@mail.ru'
 				},
 				profileData = {user: user},
 				rawProfile = JSON.stringify(profileData);
@@ -112,6 +113,8 @@ describe('Profile', function() {
 			expect(profile.profileUrl)
 				.to.eql('https://all.culture.ru/cabinet/users/' + user._id);
 			expect(profile.photos).to.have.length(0);
+			expect(profile.emails).to.have.length(1);
+			expect(profile.emails).to.eql([{value: user.email}]);
 		});
 	});
 });
