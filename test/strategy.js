@@ -1,39 +1,35 @@
 'use strict';
 
-var expect = require('expect.js'),
-	url = require('url'),
-	helpers = require('./helpers'),
-	sinon = require('sinon');
+var Strategy = require('../lib').Strategy;
+var expect = require('expect.js');
 
 describe('Strategy', function() {
-	var strategy;
-	describe('creating', function() {
-		it('should create strategy', function() {
-			strategy = helpers.createStrategy();
-			expect(strategy.name).to.eql('eipsk');
-		});
-	});
+	it('check profile parsing', function() {
+		var strategy = new Strategy({
+			clientID: '1234',
+			clientPublic: '1234',
+			clientSecret: '123abcf3213'
+		}, function() {});
 
-	describe('authenteication layout', function() {
-		var strategy;
+		var user = {
+			_id: 1,
+			firstName: 'Петр',
+			gender: 'male',
+			lastName: 'Петров',
+			email: 'example@mail.ru'
+		};
 
-		beforeEach(function() {
-			strategy = helpers.createStrategy();
-			helpers.passport.use(strategy);
-		});
+		var profile = strategy.parseProfile({user: user});
 
-		afterEach(function() {
-			helpers.passport.restore();
-		});
-
-		it('should redirect', function() {
-			var redirectStub = sinon.stub(strategy, 'redirect');
-			helpers.passport.authenticate();
-
-			var query = url.parse(redirectStub.firstCall.args[0], true).query;
-
-			expect(query.layout).to.not.be.ok();
-			expect(query.response_type).to.eql('code');
-		});
+		expect(profile.id).to.eql(user._id);
+		expect(profile.displayName).to.eql(user.firstName + ' ' + user.lastName);
+		expect(profile.name.familyName).to.eql(user.lastName);
+		expect(profile.name.givenName).to.eql(user.firstName);
+		expect(profile.gender).to.eql(user.gender);
+		expect(profile.profileUrl)
+			.to.eql('https://all.culture.ru/cabinet/users/' + user._id);
+		expect(profile.photos).to.have.length(0);
+		expect(profile.emails).to.have.length(1);
+		expect(profile.emails).to.eql([{value: user.email}]);
 	});
 });
