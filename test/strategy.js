@@ -27,7 +27,7 @@ describe('Strategy', function() {
 		expect(profile.name.givenName).to.eql(user.firstName);
 		expect(profile.gender).to.eql(user.gender);
 		expect(profile.profileUrl)
-			.to.eql('https://all.culture.ru/cabinet/users/' + user._id);
+			.to.eql('https://pro.culture.ru/cabinet/users/' + user._id);
 		expect(profile.photos).to.have.length(0);
 		expect(profile.emails).to.have.length(1);
 		expect(profile.emails).to.eql([{value: user.email}]);
